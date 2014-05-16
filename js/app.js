@@ -1,49 +1,83 @@
 $(document).ready(function() {
+
+	var playReady = "";
 	
 	$('.ryu').mouseenter(function() {
-		$('.ryu-still').hide();
-		$('.ryu-ready').show();
+		if (!playReady) {
+			$('.ryu-still').hide();
+			$('.ryu-ready').show();
+		}
 	})
 	
 	$('.ryu').mouseleave(function() {
-		$('.ryu-ready').hide();
-		$('.ryu-still').show();
+		if (!playReady) {
+			$('.ryu-ready').hide();
+			$('.ryu-still').show();
+		}
 	})
 	
 	$('.ryu').mousedown(function() {
-		playHadouken();
-		$('.ryu-ready').hide();
-		$('.ryu-throwing').show();
-		$('.hadouken').finish().show() 
-		.animate(
-			{'left': '300px'},
-			500,
-			function() {
-				$(this).hide();
-				$(this).css('left', '-212px');
-			}
-		);
+		if ($('.ryu-cool:visible').length) {
+			return
+		}
+
+		if (!playReady) {
+			playReady = "mousedown";
+			playHadouken();
+			$('.ryu-ready').hide();
+			$('.ryu-throwing').show();
+			$('.hadouken').finish().show() 
+			.animate(
+				{'left': '300px'},
+				500,
+				function() {
+					$(this).hide();
+					$(this).css('left', '-212px');
+				}
+			);
+		}
 	})
 	
 	$('.ryu').mouseup(function() {
-		$('.ryu-throwing').hide();
-		$('.ryu-ready').show();
+		if ($('.ryu-cool:visible').length) {
+			return
+		}
+		if (playReady == "mousedown") {
+			playReady = "";
+			$('.ryu-still').hide();
+			$('.ryu-throwing').hide();
+			$('.ryu-ready').show();
+		}
 	})
 
 	$(document).keydown(function(event) {
-		if (event.keyCode == 88) {
-			$('.ryu-still').hide();
-			$('.ryu-ready').hide();
-			$('.ryu-throwing').hide();
-			$('.ryu-cool').show();	
+		if (!$('.ryu-still:visible').length) {
+			return
+		}
+
+		if (!playReady) {
+			playReady = "mousedown";
+
+			if (event.keyCode == 88) {
+				$('.ryu-still').hide();
+				$('.ryu-ready').hide();
+				$('.ryu-throwing').hide();
+				$('.ryu-cool').show();	
+			}
 		}
 	})
 
 	$(document).keyup(function(event) {
-	    $('.ryu-cool').hide();
-        $('.ryu-ready').hide();
-        $('.ryu-throwing').hide();
-        $('.ryu-still').show();
+		if (playReady == "mousedown") {
+			playReady = "";
+
+		    if (event.keyCode == 88) {
+		    	$('.ryu-cool').hide();
+	        	$('.ryu-throwing').hide();
+	        	$('.ryu-ready').hide();
+	        	$('.ryu-still').show();
+	    	}
+	    }
     });
 
 });
